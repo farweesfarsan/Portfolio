@@ -6,7 +6,12 @@ import { useEffect } from "react";
 
 export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    // Check if error is a valid Error object before capturing it with Sentry
+    if (error instanceof Error) {
+      Sentry.captureException(error);
+    } else {
+      Sentry.captureException(new Error("Non-error object captured: " + JSON.stringify(error)));
+    }
   }, [error]);
 
   return (
